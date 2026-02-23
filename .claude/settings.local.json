@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd:*)",
+      "Bash(echo uv not found in PATH:*)",
+      "Bash(powershell:*)",
+      "Bash(export:*)",
+      "Bash(export PATH=\"$PATH:/c/Users/aur_m/.local/bin\" && cd /c/Users/aur_m/src/colabcliproject && uv sync 2>&1)",
+      "Bash(/c/Users/aur_m/.local/bin/uv run:*)"
+    ]
+  }
+}
