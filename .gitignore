@@ -5,4 +5,5 @@ __pycache__/
 dist/
 build/
 .pytest_cache/
+.claude/
 uv.lock
