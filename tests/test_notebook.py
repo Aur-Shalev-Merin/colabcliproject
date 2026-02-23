@@ -2,7 +2,7 @@
 
 import nbformat
 
-from colab_push.notebook import create_notebook, load_ipynb, detect_third_party_imports
+from tocolab.notebook import create_notebook, load_ipynb, detect_third_party_imports
 
 
 # --- Basic notebook creation ---

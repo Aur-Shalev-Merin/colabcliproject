@@ -3,8 +3,8 @@
 from unittest.mock import patch
 from typer.testing import CliRunner
 
-from colab_push.cli import app
-from colab_push.config import EXIT_USER_ERROR
+from tocolab.cli import app
+from tocolab.config import EXIT_USER_ERROR
 
 runner = CliRunner()
 
@@ -23,7 +23,7 @@ def test_empty_file(tmp_path):
 
 def test_no_input_tty():
     """No file and stdin is a TTY shows error."""
-    with patch("colab_push.cli.sys.stdin") as mock_stdin:
+    with patch("tocolab.cli.sys.stdin") as mock_stdin:
         mock_stdin.isatty.return_value = True
         result = runner.invoke(app, [])
         # Either shows help or shows error about no input

@@ -1,5 +1,5 @@
 [project]
-name = "colab-push"
+name = "tocolab"
 version = "0.1.0"
 description = "Push code to Google Colab from the command line"
 readme = "README.md"
@@ -13,7 +13,7 @@ dependencies = [
 ]
 
 [project.scripts]
-colab-push = "colab_push.cli:app_entry"
+tocolab = "tocolab.cli:app_entry"
 
 [build-system]
 requires = ["hatchling"]

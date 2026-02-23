@@ -6,7 +6,7 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 
-from colab_push.config import (
+from tocolab.config import (
     CONFIG_DIR,
     CREDENTIALS_FILE,
     TOKEN_FILE,
@@ -19,7 +19,7 @@ def print_setup_guide() -> None:
     """Print instructions for setting up Google Cloud credentials."""
     sys.stderr.write(
         "\n"
-        "=== colab-push: Setup Required ===\n"
+        "=== tocolab: Setup Required ===\n"
         "\n"
         "No credentials.json found. Follow these steps:\n"
         "\n"
@@ -34,7 +34,7 @@ def print_setup_guide() -> None:
         "   - Choose 'Desktop app' as the application type\n"
         "   - Download the JSON file\n"
         f"5. Save it as: {CREDENTIALS_FILE}\n"
-        "6. Run: colab-push auth\n"
+        "6. Run: tocolab auth\n"
         "\n"
     )
 

@@ -3,7 +3,7 @@
 from unittest.mock import patch, MagicMock
 from typer.testing import CliRunner
 
-from colab_push.cli import app
+from tocolab.cli import app
 
 runner = CliRunner()
 
@@ -26,9 +26,9 @@ def test_file_input(tmp_path):
     }
 
     with (
-        patch("colab_push.cli.get_credentials", return_value=mock_creds),
-        patch("colab_push.cli.build", return_value=mock_service),
-        patch("colab_push.cli.open_in_browser") as mock_browser,
+        patch("tocolab.cli.get_credentials", return_value=mock_creds),
+        patch("tocolab.cli.build", return_value=mock_service),
+        patch("tocolab.cli.open_in_browser") as mock_browser,
     ):
         result = runner.invoke(app, [str(py_file)])
         assert result.exit_code == 0
@@ -47,9 +47,9 @@ def test_no_open_flag(tmp_path):
     }
 
     with (
-        patch("colab_push.cli.get_credentials", return_value=mock_creds),
-        patch("colab_push.cli.build", return_value=mock_service),
-        patch("colab_push.cli.open_in_browser") as mock_browser,
+        patch("tocolab.cli.get_credentials", return_value=mock_creds),
+        patch("tocolab.cli.build", return_value=mock_service),
+        patch("tocolab.cli.open_in_browser") as mock_browser,
     ):
         result = runner.invoke(app, [str(py_file), "--no-open"])
         assert result.exit_code == 0
@@ -59,7 +59,7 @@ def test_no_open_flag(tmp_path):
 
 def test_auth_subcommand():
     """colab-push auth triggers re-authentication."""
-    with patch("colab_push.cli.get_credentials") as mock_auth:
+    with patch("tocolab.cli.get_credentials") as mock_auth:
         result = runner.invoke(app, ["auth"])
         mock_auth.assert_called_once_with(force_reauth=True)
         assert result.exit_code == 0

@@ -3,7 +3,7 @@
 from unittest.mock import MagicMock
 import nbformat
 
-from colab_push.drive import upload_notebook, find_or_create_folder
+from tocolab.drive import upload_notebook, find_or_create_folder
 
 
 def _make_fake_notebook():

@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-APP_NAME = "colab-push"
+APP_NAME = "tocolab"
 CONFIG_DIR = Path.home() / ".config" / APP_NAME
 CREDENTIALS_FILE = CONFIG_DIR / "credentials.json"
 TOKEN_FILE = CONFIG_DIR / "token.json"

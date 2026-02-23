@@ -1,12 +1,12 @@
 """Tests for config module."""
 
 from pathlib import Path
-from colab_push.config import CONFIG_DIR, CREDENTIALS_FILE, TOKEN_FILE, SCOPES
+from tocolab.config import CONFIG_DIR, CREDENTIALS_FILE, TOKEN_FILE, SCOPES
 
 
 def test_config_dir_is_under_home():
     assert str(Path.home()) in str(CONFIG_DIR)
-    assert "colab-push" in str(CONFIG_DIR)
+    assert "tocolab" in str(CONFIG_DIR)
 
 
 def test_credentials_file_in_config_dir():

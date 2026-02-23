@@ -4,14 +4,14 @@ from unittest.mock import patch, MagicMock
 
 import pytest
 
-from colab_push.auth import get_credentials, print_setup_guide
-from colab_push.config import EXIT_AUTH_ERROR
+from tocolab.auth import get_credentials, print_setup_guide
+from tocolab.config import EXIT_AUTH_ERROR
 
 
 def test_print_setup_guide_on_missing_credentials(capsys, tmp_path):
     """When credentials.json doesn't exist, print a setup guide and exit."""
     fake_creds = tmp_path / "credentials.json"
-    with patch("colab_push.auth.CREDENTIALS_FILE", fake_creds):
+    with patch("tocolab.auth.CREDENTIALS_FILE", fake_creds):
         with pytest.raises(SystemExit) as exc_info:
             get_credentials()
         assert exc_info.value.code == EXIT_AUTH_ERROR
@@ -30,9 +30,9 @@ def test_loads_existing_valid_token(tmp_path):
     mock_creds.valid = True
 
     with (
-        patch("colab_push.auth.CREDENTIALS_FILE", fake_creds),
-        patch("colab_push.auth.TOKEN_FILE", fake_token),
-        patch("colab_push.auth.Credentials.from_authorized_user_file", return_value=mock_creds) as mock_load,
+        patch("tocolab.auth.CREDENTIALS_FILE", fake_creds),
+        patch("tocolab.auth.TOKEN_FILE", fake_token),
+        patch("tocolab.auth.Credentials.from_authorized_user_file", return_value=mock_creds) as mock_load,
     ):
         fake_token.write_text('{"token": "fake"}')
         result = get_credentials()
@@ -53,11 +53,11 @@ def test_refreshes_expired_token(tmp_path):
     mock_creds.refresh_token = "refresh_me"
 
     with (
-        patch("colab_push.auth.CREDENTIALS_FILE", fake_creds),
-        patch("colab_push.auth.TOKEN_FILE", fake_token),
-        patch("colab_push.auth.CONFIG_DIR", tmp_path),
-        patch("colab_push.auth.Credentials.from_authorized_user_file", return_value=mock_creds),
-        patch("colab_push.auth.Request") as mock_request,
+        patch("tocolab.auth.CREDENTIALS_FILE", fake_creds),
+        patch("tocolab.auth.TOKEN_FILE", fake_token),
+        patch("tocolab.auth.CONFIG_DIR", tmp_path),
+        patch("tocolab.auth.Credentials.from_authorized_user_file", return_value=mock_creds),
+        patch("tocolab.auth.Request") as mock_request,
     ):
         mock_creds.to_json.return_value = '{"token": "refreshed"}'
         result = get_credentials()
@@ -78,10 +78,10 @@ def test_runs_oauth_flow_when_no_token(tmp_path):
     mock_flow.run_local_server.return_value = mock_flow_creds
 
     with (
-        patch("colab_push.auth.CREDENTIALS_FILE", fake_creds),
-        patch("colab_push.auth.TOKEN_FILE", fake_token),
-        patch("colab_push.auth.CONFIG_DIR", tmp_path),
-        patch("colab_push.auth.InstalledAppFlow.from_client_secrets_file", return_value=mock_flow),
+        patch("tocolab.auth.CREDENTIALS_FILE", fake_creds),
+        patch("tocolab.auth.TOKEN_FILE", fake_token),
+        patch("tocolab.auth.CONFIG_DIR", tmp_path),
+        patch("tocolab.auth.InstalledAppFlow.from_client_secrets_file", return_value=mock_flow),
     ):
         result = get_credentials()
         mock_flow.run_local_server.assert_called_once_with(port=0)

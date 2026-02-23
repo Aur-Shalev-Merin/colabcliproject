@@ -2,7 +2,7 @@
 
 import webbrowser
 
-from colab_push.config import COLAB_BASE_URL
+from tocolab.config import COLAB_BASE_URL
 
 
 def get_colab_url(file_id: str) -> str:

@@ -3,7 +3,7 @@
 from unittest.mock import patch, MagicMock
 from typer.testing import CliRunner
 
-from colab_push.cli import app
+from tocolab.cli import app
 
 runner = CliRunner()
 
@@ -20,9 +20,9 @@ def test_full_flow_file_to_colab(tmp_path):
     }
 
     with (
-        patch("colab_push.cli.get_credentials", return_value=mock_creds),
-        patch("colab_push.cli.build", return_value=mock_service),
-        patch("colab_push.cli.open_in_browser") as mock_browser,
+        patch("tocolab.cli.get_credentials", return_value=mock_creds),
+        patch("tocolab.cli.build", return_value=mock_service),
+        patch("tocolab.cli.open_in_browser") as mock_browser,
     ):
         result = runner.invoke(app, [str(py_file), "--no-open"])
         assert result.exit_code == 0
@@ -42,9 +42,9 @@ def test_full_flow_with_gpu(tmp_path):
     }
 
     with (
-        patch("colab_push.cli.get_credentials", return_value=mock_creds),
-        patch("colab_push.cli.build", return_value=mock_service),
-        patch("colab_push.cli.open_in_browser"),
+        patch("tocolab.cli.get_credentials", return_value=mock_creds),
+        patch("tocolab.cli.build", return_value=mock_service),
+        patch("tocolab.cli.open_in_browser"),
     ):
         result = runner.invoke(app, [str(py_file), "--gpu", "--no-open"])
         assert result.exit_code == 0
@@ -67,9 +67,9 @@ def test_full_flow_ipynb(tmp_path):
     }
 
     with (
-        patch("colab_push.cli.get_credentials", return_value=mock_creds),
-        patch("colab_push.cli.build", return_value=mock_service),
-        patch("colab_push.cli.open_in_browser"),
+        patch("tocolab.cli.get_credentials", return_value=mock_creds),
+        patch("tocolab.cli.build", return_value=mock_service),
+        patch("tocolab.cli.open_in_browser"),
     ):
         result = runner.invoke(app, [str(ipynb_file), "--no-open"])
         assert result.exit_code == 0

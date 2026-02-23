@@ -8,11 +8,11 @@ import typer
 from typer.core import TyperGroup
 from googleapiclient.discovery import build
 
-from colab_push.auth import get_credentials
-from colab_push.notebook import create_notebook, load_ipynb
-from colab_push.drive import upload_notebook, find_or_create_folder
-from colab_push.colab import get_colab_url, open_in_browser
-from colab_push.config import EXIT_USER_ERROR, EXIT_NETWORK_ERROR
+from tocolab.auth import get_credentials
+from tocolab.notebook import create_notebook, load_ipynb
+from tocolab.drive import upload_notebook, find_or_create_folder
+from tocolab.colab import get_colab_url, open_in_browser
+from tocolab.config import EXIT_USER_ERROR, EXIT_NETWORK_ERROR
 
 
 class _DefaultGroup(TyperGroup):
@@ -28,7 +28,7 @@ class _DefaultGroup(TyperGroup):
 
 
 app = typer.Typer(
-    name="colab-push",
+    name="tocolab",
     help="Push code to Google Colab from the command line.",
     add_completion=False,
     cls=_DefaultGroup,
