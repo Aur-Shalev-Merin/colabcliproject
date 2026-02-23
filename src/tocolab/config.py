@@ -7,6 +7,7 @@ CONFIG_DIR = Path.home() / ".config" / APP_NAME
 CREDENTIALS_FILE = CONFIG_DIR / "credentials.json"
 TOKEN_FILE = CONFIG_DIR / "token.json"
 CONFIG_FILE = CONFIG_DIR / "config.toml"
+LAST_PUSH_FILE = CONFIG_DIR / "last_push.json"
 
 SCOPES = ["https://www.googleapis.com/auth/drive.file"]
 

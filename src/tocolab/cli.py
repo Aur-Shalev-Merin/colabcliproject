@@ -1,5 +1,6 @@
 """CLI entry point using Typer."""
 
+import json
 import sys
 from pathlib import Path
 from typing import Optional
@@ -10,9 +11,10 @@ from googleapiclient.discovery import build
 
 from tocolab.auth import get_credentials
 from tocolab.notebook import create_notebook, load_ipynb
-from tocolab.drive import upload_notebook, find_or_create_folder
-from tocolab.colab import get_colab_url, open_in_browser
-from tocolab.config import EXIT_USER_ERROR, EXIT_NETWORK_ERROR
+from tocolab.drive import upload_notebook, download_notebook, find_or_create_folder
+from tocolab.colab import get_colab_url, open_in_browser, parse_file_id
+from tocolab.output import render_notebook
+from tocolab.config import EXIT_USER_ERROR, EXIT_NETWORK_ERROR, LAST_PUSH_FILE
 
 
 class _DefaultGroup(TyperGroup):
@@ -33,6 +35,29 @@ app = typer.Typer(
     add_completion=False,
     cls=_DefaultGroup,
 )
+
+
+def _save_last_push(file_id: str, name: str) -> None:
+    """Persist the most recently pushed notebook's file ID and name."""
+    LAST_PUSH_FILE.parent.mkdir(parents=True, exist_ok=True)
+    LAST_PUSH_FILE.write_text(
+        json.dumps({"file_id": file_id, "name": name}), encoding="utf-8"
+    )
+
+
+def _load_last_push() -> dict:
+    """Load the most recently pushed notebook info.
+
+    Returns:
+        Dict with 'file_id' and 'name' keys.
+
+    Raises:
+        SystemExit: If no previous push is recorded.
+    """
+    if not LAST_PUSH_FILE.exists():
+        sys.stderr.write("Error: No previous push found. Push a notebook first.\n")
+        raise SystemExit(EXIT_USER_ERROR)
+    return json.loads(LAST_PUSH_FILE.read_text(encoding="utf-8"))
 
 
 @app.command(name="push", hidden=True)
@@ -120,6 +145,9 @@ def _run(source, name, gpu, tpu, folder, no_open, copy, verbose):
     file_id = upload_notebook(service, nb, notebook_name, folder_id=folder_id)
     url = get_colab_url(file_id)
 
+    # Track last push
+    _save_last_push(file_id, notebook_name)
+
     sys.stderr.write(f"Uploaded: {file_id}\n")
     sys.stderr.write(f"URL: {url}\n")
 
@@ -133,6 +161,74 @@ def _run(source, name, gpu, tpu, folder, no_open, copy, verbose):
 
         pyperclip.copy(url)
         sys.stderr.write("URL copied to clipboard.\n")
+
+
+@app.command()
+def pull(
+    source: Optional[str] = typer.Argument(
+        None, help="Colab URL or Drive file ID."
+    ),
+    last: bool = typer.Option(
+        False, "--last", help="Pull the most recently pushed notebook."
+    ),
+    save: Optional[Path] = typer.Option(
+        None, "--save", help="Save the executed notebook to a local file."
+    ),
+    raw: bool = typer.Option(
+        False, "--raw", help="Print raw notebook JSON instead of rendered output."
+    ),
+    verbose: bool = typer.Option(
+        False, "--verbose", "-v", help="Show full error traces."
+    ),
+):
+    """Download an executed notebook from Colab and display results."""
+    try:
+        _run_pull(source, last, save, raw)
+    except SystemExit:
+        raise
+    except Exception as e:
+        if verbose:
+            raise
+        sys.stderr.write(f"Error: {e}\n")
+        raise SystemExit(EXIT_NETWORK_ERROR)
+
+
+def _run_pull(source, last, save, raw):
+    # Resolve file ID
+    if last:
+        info = _load_last_push()
+        file_id = info["file_id"]
+        sys.stderr.write(f"Pulling last pushed notebook: {info.get('name', file_id)}\n")
+    elif source:
+        try:
+            file_id = parse_file_id(source)
+        except ValueError as e:
+            sys.stderr.write(f"Error: {e}\n")
+            raise SystemExit(EXIT_USER_ERROR)
+    else:
+        sys.stderr.write(
+            "Error: Provide a Colab URL / file ID, or use --last.\n"
+        )
+        raise SystemExit(EXIT_USER_ERROR)
+
+    # Authenticate and download
+    creds = get_credentials()
+    service = build("drive", "v3", credentials=creds)
+
+    import nbformat
+
+    nb = download_notebook(service, file_id)
+
+    # Save locally if requested
+    if save:
+        save.write_text(nbformat.writes(nb), encoding="utf-8")
+        sys.stderr.write(f"Saved to {save}\n")
+
+    # Output
+    if raw:
+        print(nbformat.writes(nb))
+    else:
+        render_notebook(nb)
 
 
 @app.command()

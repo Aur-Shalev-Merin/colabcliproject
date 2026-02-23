@@ -1,9 +1,10 @@
-"""Google Drive API: upload notebooks."""
+"""Google Drive API: upload and download notebooks."""
 
+import io
 from typing import Optional
 
 import nbformat
-from googleapiclient.http import MediaInMemoryUpload
+from googleapiclient.http import MediaInMemoryUpload, MediaIoBaseDownload
 
 
 def upload_notebook(
@@ -46,6 +47,26 @@ def upload_notebook(
     ).execute()
 
     return file["id"]
+
+
+def download_notebook(service, file_id: str) -> nbformat.NotebookNode:
+    """Download a notebook from Google Drive.
+
+    Args:
+        service: Authenticated Google Drive API service.
+        file_id: The Google Drive file ID.
+
+    Returns:
+        The downloaded notebook as a NotebookNode.
+    """
+    request = service.files().get_media(fileId=file_id)
+    buf = io.BytesIO()
+    downloader = MediaIoBaseDownload(buf, request)
+    done = False
+    while not done:
+        _, done = downloader.next_chunk()
+    buf.seek(0)
+    return nbformat.read(buf, as_version=4)
 
 
 def find_or_create_folder(service, folder_name: str) -> str:

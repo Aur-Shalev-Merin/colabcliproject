@@ -7,7 +7,8 @@
       "Bash(export:*)",
       "Bash(export PATH=\"$PATH:/c/Users/aur_m/.local/bin\" && cd /c/Users/aur_m/src/colabcliproject && uv sync 2>&1)",
       "Bash(/c/Users/aur_m/.local/bin/uv run:*)",
-      "Bash(/c/Users/aur_m/.local/bin/uv sync:*)"
+      "Bash(/c/Users/aur_m/.local/bin/uv sync:*)",
+      "Bash(cd /c/Users/aur_m/src/colabcliproject && uv run pytest -v 2>&1)"
     ]
   }
 }
